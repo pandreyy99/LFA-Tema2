@@ -3,32 +3,22 @@
 //
 
 #include "AFD.h"
-#include <vector>
-#include <list>
-#include <utility>
-#include <iostream>
 #include <fstream>
 
 using namespace std ;
 
-/**
- * trebuie adjustat
- */
-/**void AFD::afisare() {
-    ifstream out("C:\\Users\\Andrei\\Documents\\GitHub\\LFA-Tema2\\output") ;
+void afisare(AFD *M, int nrStari) {
+    ofstream out("C:\\Users\\Andrei\\Documents\\GitHub\\LFA-Tema2\\output");
     for( int i = 0 ; i < nrStari ; i++ ){
-        out << "Starea " << i << " : q" ;
-        while( !Stare[i].empty() ) {
-            out << Stare[i].front() ;
-            Stare[i].pop_front() ;
-        }
+        out << "Din starea " << M[i].stareInit;
+        out << " ajungi cu caracterul " << M[i].character;
+        out << " in starea " << M[i].stareFin;
         out << '\n' ;
     }
 }
-*/
-void AFD::adauga( int stareDeAdaugat , int indice ) {
-    Stare[ indice ].push_back( stareDeAdaugat ) ;
 
+void adaugaTranzitie(AFD *M, int pozitie, int starePlecare, char characterTranzitie, int stareDestinatie) {
+    M[pozitie].stareInit = starePlecare;
+    M[pozitie].character = characterTranzitie;
+    M[pozitie].stareFin = stareDestinatie;
 }
-
-

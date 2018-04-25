@@ -10,8 +10,6 @@
 #include <list>
 #include <vector>
 #include <queue>
-#include <cstring>
-#include <utility>
 
 using namespace std ;
 
@@ -21,15 +19,20 @@ public:
     AFN ( const AFN& C );
     virtual ~AFN();
     friend void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr ) ;
-    friend bool delta( AFN *T , int n , int *StF , int nr , queue < int > &MultimeStari , char word[100]) ;
-    friend void delta_prim( AFN *T , int n , queue < int >& MultimeStari , char character ) ;
+
+    ///friend bool delta( AFN *T , int n , int *StF , int nr , queue < int > &MultimeStari , char word[100]) ;
+    ///friend void delta_prim( AFN *T , int n , queue < int >& MultimeStari , char character ) ;
     friend void inchidere( AFN * , int nrStari ) ;
 
-/**protected:
+    friend bool isNot(AFN *T, int nrStari, int pozitie, int stare);
+
+    friend vector<int> concatenate(vector<int>, vector<int>);
+
+    friend vector<int> delta(AFN *T, int nrStari, int stare, char character);
+
+protected:
 
 private:
-*/
-     ///vector < list < int > > StareInit ;
     int StareInit ;
     vector < int > Inchidere ;
     unsigned int nrchr ;

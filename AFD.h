@@ -5,31 +5,24 @@
 #ifndef LFA2_AFD_H
 #define LFA2_AFD_H
 
-#include <list>
-#include <vector>
-#include <utility>
 #include <iostream>
-#include <fstream>
 
 using namespace std ;
 
 class AFD {
-    int nrStari ;
-    vector < list < int > > Stare ;
 
 public:
-    AFD( int number ){
-        nrStari = number ;
-        Stare.resize( number + 1 ) ;
-    }
-    ///void afisare() ;
-    void adauga( int stareDeAdaugat , int indice ) ;
-    ~AFD(){
-        nrStari = 0 ;
-        Stare.resize( 0 ) ;
-    }
+    AFD() {}
 
+    friend void afisare(AFD *M, int nrStari);
+
+    friend void adaugaTranzitie(AFD *M, int pozitie, int starePlecare, char character, int StareDestinatie);
+
+    ~AFD() {}
+
+    int stareInit;
+    char character;
+    int stareFin;
 };
-
 
 #endif //LFA2_AFD_H

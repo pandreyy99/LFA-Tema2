@@ -4,13 +4,7 @@
 
 #include "AFN.h"
 
-#include <iostream>
-#include <fstream>
-#include <list>
-#include <vector>
-#include <queue>
 #include <cstring>
-#include <utility>
 
 using namespace std;
 
@@ -69,10 +63,8 @@ void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr )
         /** Citim caracterele cu care putem realiza tranzitii */
         for( j = 0 ; j < T[i].nrchr ; j++ ){
             /** Citim caracterul j+1 pentru starea curenta */
-            cout << "Dati caracterul " << j+1 << " pentru starea " << i+1 ;
-            cin.get( T[i].chr[j] ) ;
-            cin.get() ;
-            cout << '\n' ;
+
+            f >> T[i].chr[j];
             /** Citim starile in care putem ajunge cu caracterul curent , pana la intalnirea valorii -1 */
             f >> x ;
             while( x!=-1 ){
@@ -84,75 +76,76 @@ void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr )
     cout << "Automat citit!" << '\n' ;
 }
 
-void delta_prim( AFN *T , int n , queue < int >& MultimeStari , char character )
-{
-    /**
-    Vectorul de tip AFN T contine toate tranzitiile posibile a automatului
-    nrstari = nr total de stari
-    Coada MultimeStari primita ca parametru este compusa din starile din care vom pleca cu caracterul character
-    In coada C_temp vom introduce starile in care se ajunge dupa efectuarea operatiei d*(q,character) , unde q apartine MultimeStari
-    character = caracterul cu care se vor face tranzitiile
-    Lista L este o copie temporara a listei de stari in care se poate ajunge cu caracterul c din fiecare stare i , unde i apartine MultimeStari
-    */
-    queue < int > C_temp ;
-    while( !MultimeStari.empty() ){
-        int x = MultimeStari.front() ;
-        MultimeStari.pop() ;
-        for( int i = 0 ; i < n ; i++ ){
-            if( T[i].StareInit == x ){
-                for( int j = 0 ; j < T[i].nrchr ; j++ ){
-                    if( T[i].chr[j] == character ){
-                        list < int > L ;
-                        L = T[i].StareFin[j] ;
-                        while( !L.empty() ){
-                            int x = L.front() ;
-                            C_temp.push( x ) ;
-                            L.pop_front() ;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    MultimeStari = C_temp ;
-}
-
-bool delta( AFN *T , int n , int *StF , int nr , queue < int > &MultimeStari , char word[100])
-{
-    int i , j , x ;
-    if( word[0] == '\0' ){
-        for( i = 0 ; i <= MultimeStari.size() ; i++ ){
-            x = MultimeStari.front() ;
-            MultimeStari.pop() ;
-            for( j = 0 ; j < nr ; j++ )
-                if( x == StF[j] )
-                    return true ;
-        }
-        return false ;
-    }
-    else {
-        if( MultimeStari.empty() )
-            return false ;
-        else {
-            char x = word[0] ;
-            strcpy( word , word + 1 ) ;
-            delta_prim( T , n , MultimeStari , x ) ;
-            return delta( T , n , StF , nr , MultimeStari , word ) ;
-        }
-    }
+bool isNot(AFN *T, int nrStari, int pozitie, int stare) {
+    for (auto iterator = T[pozitie].Inchidere.begin(); iterator != T[pozitie].Inchidere.end(); iterator++)
+        if (*iterator == stare) return false;
+    return true;
 }
 
 void inchidere( AFN* T , int nrStari ){
     T->Inchidere.resize( nrStari + 1 ) ;
     list < int > L ;
-    for( int i = 0 ; i < nrStari ; i++ )
-        for ( int j = 0; j < T[i].nrchr; j++) {
-            if(strchr( " " , T[i].chr[j] ) )
-            L = T[i].StareFin[j];
-            while( !L.empty() ) {
-                int x = L.front() ;
-                T[i].Inchidere.push_back( x ) ;
-                L.pop_front() ;
+    for (int i = nrStari - 1; i >= 0; i--) {
+        T[i].Inchidere.push_back(i);
+        for (int j = 0; j < T[i].nrchr; j++) {
+            if (isdigit(T[i].chr[j]))
+                L = T[i].StareFin[j];
+            while (!L.empty()) {
+                int x = L.front();
+                if (isNot(T, nrStari, i, x))
+                    T[i].Inchidere.push_back(x);
+                L.pop_front();
             }
         }
+    }
+    for (int i = nrStari - 1; i >= 0; i--) {
+        for (int j = 0; j < T[i].nrchr; j++) {
+            if (isdigit(T[i].chr[j]))
+                L = T[i].StareFin[j];
+            while (!L.empty()) {
+                int x = L.front();
+                for (auto iterator = T[x].Inchidere.begin(); iterator != T[x].Inchidere.end(); iterator++) {
+                    if (isNot(T, nrStari, i, *iterator))
+                        T[i].Inchidere.push_back(*iterator);
+                }
+                L.pop_front();
+            }
+        }
+    }
+}
+
+vector<int> concatenate(vector<int> multime1, vector<int> multime2) {
+    vector<int> temp;
+    int size = multime1.size() + multime2.size();
+    temp.resize(size + 1);
+    for (auto iterator = multime1.begin(); iterator != multime1.end(); iterator++)
+        temp.push_back(*iterator);
+    for (auto iterator = multime2.begin(); iterator != multime2.end(); iterator++) {
+        bool ok = true;
+        for (auto i = temp.begin(); i != temp.end(); i++)
+            if (*iterator == *i) ok = false;
+        if (ok) temp.push_back(*iterator);
+    }
+    return temp;
+}
+
+vector<int> delta(AFN *T, int nrStari, int stare, char character) {
+    inchidere(T, nrStari);
+    vector<int> temp1, temp2;
+    temp1.resize(nrStari + 1);
+    temp2.resize(nrStari + 1);
+    for (auto iterator = T[stare].Inchidere.begin(); iterator != T[stare].Inchidere.end(); iterator++) {
+        for (int i = 0; i < T[*iterator].nrchr; i++)
+            if (T[*iterator].chr[i] == character) {
+                list<int> L = T[*iterator].StareFin[i];
+                while (!L.empty()) {
+                    int x = L.front();
+                    temp1.push_back(x);
+                    L.pop_front();
+                }
+            }
+    }
+    for (auto iterator = temp1.begin(); iterator != temp1.end(); iterator++)
+        temp2 = concatenate(temp2, T[*iterator].Inchidere);
+    return temp2;
 }
