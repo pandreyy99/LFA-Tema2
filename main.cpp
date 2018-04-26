@@ -1,10 +1,10 @@
 #include <iostream>
 #include <cstring>
+#include <algorithm>
 #include "AFN.h"
-#include "AFD.h"
 
 struct Table{
-    char c;
+    char c[100];
     vector < int > vector1 ;
 };
 
@@ -21,9 +21,8 @@ string toString( vector < int > local , int dim ){
 }
 
 bool isNew( vector < string > vector1 , int dimVector , string deCautat ){
-    for( int i = 0 ; i < dimVector ; i++ ){
-        for( string iterator : vector1 )
-            if( iterator == deCautat ) return false ;
+    for (auto iterator = vector1.begin(); iterator != vector1.end(); iterator++) {
+        if ((*iterator) == deCautat) return false;
     }
     return true ;
 }
@@ -55,13 +54,11 @@ using namespace std ;
 int main() {
     int nrstari , q0 , nrstarifin , *StFin , tableSize , vectorStringSize = 0 , afdSize = 0 ;
     char alfabet[100] ;
-    vector < string > stari ;
     AFN *T ;
-    AFD M[100];
     citire_automat( T , nrstari , q0 , StFin , nrstarifin , alfabet ) ;
     tableSize = strlen(alfabet) ;
     tableSize *= nrstari ;
-    Table local[ tableSize + 1 ] ;
+    Table local[tableSize + 1];
     tableSize = 0 ;
 
     /**
@@ -69,32 +66,69 @@ int main() {
      */
     for( int j = 0 ; j < strlen(alfabet) ; j++ )
         for( int i = 0 ; i < nrstari ; i++ ) {
-            local[++tableSize].c = alfabet[j] ;
+            local[++tableSize].c[0] = alfabet[j];
             local[tableSize].vector1 = delta( T , nrstari , i , alfabet[j] ) ;
         }
 
     /**
      * reuniune
      */
-    string stareInitiala = toString( T[q0].getInchidere() , nrstari ) , stare ;
-    vector < int > temp = T[q0].getInchidere() ;
+    queue<vector<int> > Q;
+    vector<int> temp, temp2;
+    vector<string> stari, stariFinaleAfd;
+    vector<pair<pair<string, string>, char> > afd;
+
     stari.resize(100);
-    stare = stareInitiala ;
-    for( int i = 0 ; i < strlen(alfabet) ; i++ ) {
-        while ( isNew(stari , vectorStringSize , stare ) ) {
-            vector<int> temp2;
-            bool ok ;
-            stari[vectorStringSize++] = stare;
+    afd.resize(100);
+    stariFinaleAfd.resize(100);
+    temp2.resize(100);
+    for (int i = 0; i < 100; i++) {
+        stari.pop_back();
+        afd.pop_back();
+        stariFinaleAfd.pop_back();
+        temp2.pop_back();
+    }
+    int k = 0;
+    Q.push(T[q0].getInchidere());
+    while (!Q.empty()) {
+        temp = Q.front();
+        sort(temp.begin(), temp.end());
+        stari.push_back(toString(temp, temp.size()));
+        Q.pop();
+        for (int i = 0; i < strlen(alfabet); i++) {
+            int ok = 0;
+            temp2.clear();
             for (int iterator : temp) {
-                ok = isStareFin( StFin , nrstarifin , iterator ) ;
                 temp2 = concatenare(temp2, delta(T, nrstari, iterator, alfabet[i]));
+                ok = isStareFin(StFin, nrstarifin, iterator);
             }
-            stare = toString(temp2, nrstari);
-            adaugaTranzitie( M , afdSize++ , stareInitiala , alfabet[i] , stare , ok ) ;
-            stareInitiala = stare ;
-            temp = temp2;
+            sort(temp2.begin(), temp2.end());
+            if (isNew(stari, stari.size(), toString(temp2, temp2.size()))) {
+                Q.push(temp2);
+                pair<string, string> aux = make_pair(toString(temp, temp.size()), toString(temp2, temp2.size()));
+                afd.push_back(make_pair(aux, alfabet[i]));
+            } else {
+                pair<string, string> aux = make_pair(toString(temp, temp.size()), toString(temp2, temp2.size()));
+                afd.push_back(make_pair(aux, alfabet[i]));
+            }
+            for (int iterator : temp2)
+                ok &= isStareFin(StFin, nrstarifin, iterator);
+            if (ok) {
+                stariFinaleAfd.push_back(toString(temp, temp.size()));
+                stariFinaleAfd.push_back(toString(temp2, temp2.size()));
+            }
         }
     }
-    afisare( M , afdSize ) ;
+    /**temp = Q.front() ;
+    for( int i = 0 ; i <= 1 ; i++ ) {
+        temp2.clear() ;
+        for (int iterator : temp)
+            temp2 = concatenare(temp2 , delta(T, nrstari, iterator, alfabet[i]));
+    }
+    sort(temp2.begin() , temp2.end());
+    string s = toString(temp2,temp2.size()) ;
+    cout << s;*/
+    for (string s : stari)
+        cout << s << " ";
     return 0;
 }

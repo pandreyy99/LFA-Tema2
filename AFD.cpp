@@ -4,6 +4,7 @@
 
 #include "AFD.h"
 #include <fstream>
+#include <cstring>
 
 using namespace std ;
 
@@ -18,10 +19,16 @@ void afisare( AFD *M , int nrStari ) {
     }
 }
 
-void adaugaTranzitie( AFD *M , int pozitie , string starePlecare ,
-                     char characterTranzitie , string stareDestinatie , bool finOrNot = false ) {
+void adaugaTranzitie(AFD M[100], int pozitie, string starePlecare, char characterTranzitie, string stareDestinatie) {
     M[pozitie].stareInit = starePlecare;
-    M[pozitie].character = characterTranzitie;
+    M[pozitie].character[0] = characterTranzitie;
     M[pozitie].stareFin = stareDestinatie;
-    M[pozitie].isStareFin = finOrNot ;
+}
+
+void adaugaCaracter(AFD *M, int dimAFD, string stare, char characterToIntroduce) {
+    for (int i = 0; i < dimAFD; i++) {
+        if (M[i].stareInit == stare)
+            if (strchr(M[i].character, characterToIntroduce) == nullptr)
+                strcat(M[i].character, reinterpret_cast<const char *>(characterToIntroduce));
+    }
 }

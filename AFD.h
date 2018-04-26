@@ -12,7 +12,7 @@ using namespace std ;
 class AFD {
 private:
     string stareInit;
-    char character;
+    char character[100];
     string stareFin;
     bool isStareFin ;
 
@@ -23,7 +23,9 @@ public:
 
     friend void afisare(AFD *M, int nrStari);
 
-    friend void adaugaTranzitie(AFD *M, int pozitie, string starePlecare, char character, string StareDestinatie , bool finOrNot);
+    friend void adaugaTranzitie(AFD M[100], int pozitie, string starePlecare, char character, string StareDestinatie);
+
+    friend void adaugaCaracter(AFD M[100], int dimAFD, string stare, char characterToIntroduce);
 
     ~AFD() {}
 
