@@ -23,6 +23,10 @@ public:
 
     friend void inchidere( AFN * , int nrStari ) ;
 
+    vector < int > getInchidere () {
+        return this->Inchidere ;
+    }
+
     friend bool isNot(AFN *T, int nrStari, int pozitie, int stare);
 
     friend vector<int> concatenate(vector<int>, vector<int>);

@@ -10,19 +10,23 @@
 using namespace std ;
 
 class AFD {
+private:
+    string stareInit;
+    char character;
+    string stareFin;
+    bool isStareFin ;
 
 public:
-    AFD() {}
+    AFD() {
+        isStareFin = false ;
+    }
 
     friend void afisare(AFD *M, int nrStari);
 
-    friend void adaugaTranzitie(AFD *M, int pozitie, int starePlecare, char character, int StareDestinatie);
+    friend void adaugaTranzitie(AFD *M, int pozitie, string starePlecare, char character, string StareDestinatie , bool finOrNot);
 
     ~AFD() {}
 
-    int stareInit;
-    char character;
-    int stareFin;
 };
 
 #endif //LFA2_AFD_H

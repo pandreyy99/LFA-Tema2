@@ -90,6 +90,7 @@ bool isNot(AFN *T, int nrStari, int pozitie, int stare) {
 
 void inchidere( AFN* T , int nrStari ){
     T->Inchidere.resize( nrStari + 1 ) ;
+    for( int i = 0 ; i <= nrStari ; i++ ) T->Inchidere.pop_back() ;
     list < int > L ;
     for (int i = nrStari - 1; i >= 0; i--) {
         T[i].Inchidere.push_back(i);
@@ -130,6 +131,7 @@ vector<int> concatenate(vector<int> multime1, vector<int> multime2) {
     vector<int> temp;
     int size = multime1.size() + multime2.size() , k = 1 ;
     temp.resize(size + 1);
+    for(int i = 0 ; i <= size ; i++ ) temp.pop_back();
     for (auto iterator = multime1.begin(); iterator != multime1.end(); iterator++)
         temp.push_back(*iterator);
     for (auto iterator = multime2.begin(); iterator != multime2.end(); iterator++) {
@@ -138,46 +140,30 @@ vector<int> concatenate(vector<int> multime1, vector<int> multime2) {
             if (*iterator == *i) ok = false;
         if (ok) { temp.push_back(*iterator); k++ ;}
     }
-    return temp.resize(multime1.size()+k);
+    return temp;
 }
 
 vector < int > delta( AFN *T , int nrStari , int stare , char character ) {
     inchidere(T, nrStari);
     vector<int> temp1, temp2;
-    temp1.resize(nrStari * nrStari); ///trebuie modif marimea
-    temp2.resize(nrStari + 1);
+    temp1.resize( nrStari + 1 );
+    temp2.resize( nrStari + 1 );
+    for( int i = 0 ; i <= nrStari ; i++ ){
+        temp1.pop_back();
+        temp2.pop_back();
+    }
     for (auto iterator = T[stare].Inchidere.begin(); iterator != T[stare].Inchidere.end(); iterator++) {
         for (int i = 0; i < T[*iterator].nrchr; i++)
             if (T[*iterator].chr[i] == character) {
                 list<int> L = T[*iterator].StareFin[i];
                 while (!L.empty()) {
                     int x = L.front();
-                    if(isNotYet())
-                    temp1.push_back(x);
+                    if(isNotYet( temp1 , x )) temp1.push_back(x);
                     L.pop_front();
                 }
             }
     }
-    for (auto iterator = temp1.begin(); iterator != temp1.end(); iterator++){
+    for (auto iterator = temp1.begin(); iterator != temp1.end(); iterator++)
         temp2 = concatenate(temp2, T[*iterator].Inchidere);
-        cout << *iterator << " " ;
-    }
-    cout << endl ;
     return temp2;
-}
-
-vector < vector < int > > tabelPrelim( AFN* T , int nrStari , char alfabet[100] ){
-    vector < vector < int > > temp ;
-    int i , j , size ;
-    size = ( strlen(alfabet) ) * nrStari + 1 ;
-    temp.resize( size ) ;
-    for( i = 0 ; i < size ; i++ )
-        temp[i].resize( ( nrStari + 1 ) , -1 ) ;
-    for( i = 0 ; i < strlen(alfabet) ; i++ ){
-        for( j = 0 ; j < size ; j++ ){
-            temp[j] = delta( T , nrStari , (j%nrStari) , alfabet[i] ) ;
-        }
-
-    }
-    return temp ;
 }
