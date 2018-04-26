@@ -20,22 +20,13 @@ public:
     AFN ( const AFN& C );
     virtual ~AFN();
     friend void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr  , char* alfabet  ) ;
-
     friend void inchidere( AFN * , int nrStari ) ;
-
     vector < int > getInchidere () {
         return this->Inchidere ;
     }
-
     friend bool isNot(AFN *T, int nrStari, int pozitie, int stare);
-
     friend vector<int> concatenate(vector<int>, vector<int>);
-
     friend vector<int> delta(AFN *T, int nrStari, int stare, char character);
-
-    friend vector < vector < int > > tabelPrelim( AFN* T , int nrStari , char* alfabet ) ;
-
-protected:
 
 private:
     int StareInit ;

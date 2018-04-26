@@ -4,8 +4,6 @@
 
 #include "AFN.h"
 
-#include <cstring>
-
 using namespace std;
 
 AFN::AFN()
@@ -38,9 +36,8 @@ AFN::~AFN()
     nrstf = 0 ;
 }
 
-void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr , char alfabet[100]  )
-{   int i , j , x  , nrLitereAlfabet ;
-    char c ;
+void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr , char alfabet[100]  ) {
+    int i, j, x;
     ifstream f( "C:\\Users\\Andrei\\Documents\\GitHub\\LFA-Tema2\\automat.ini" ) ;
     /**
      * citim alfabetul
@@ -89,7 +86,7 @@ bool isNot(AFN *T, int nrStari, int pozitie, int stare) {
 }
 
 void inchidere( AFN* T , int nrStari ){
-    T->Inchidere.resize( nrStari + 1 ) ;
+    T->Inchidere.resize(static_cast<unsigned int>(nrStari + 1));
     for( int i = 0 ; i <= nrStari ; i++ ) T->Inchidere.pop_back() ;
     list < int > L ;
     for (int i = nrStari - 1; i >= 0; i--) {
@@ -130,7 +127,7 @@ bool isNotYet( vector < int > temp , int valoare ){
 vector<int> concatenate(vector<int> multime1, vector<int> multime2) {
     vector<int> temp;
     int size = multime1.size() + multime2.size() , k = 1 ;
-    temp.resize(size + 1);
+    temp.resize(static_cast<unsigned int>(size + 1));
     for(int i = 0 ; i <= size ; i++ ) temp.pop_back();
     for (auto iterator = multime1.begin(); iterator != multime1.end(); iterator++)
         temp.push_back(*iterator);
@@ -146,8 +143,8 @@ vector<int> concatenate(vector<int> multime1, vector<int> multime2) {
 vector < int > delta( AFN *T , int nrStari , int stare , char character ) {
     inchidere(T, nrStari);
     vector<int> temp1, temp2;
-    temp1.resize( nrStari + 1 );
-    temp2.resize( nrStari + 1 );
+    temp1.resize(static_cast<unsigned int>(nrStari + 1));
+    temp2.resize(static_cast<unsigned int>(nrStari + 1));
     for( int i = 0 ; i <= nrStari ; i++ ){
         temp1.pop_back();
         temp2.pop_back();

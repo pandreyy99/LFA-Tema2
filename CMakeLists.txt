@@ -3,4 +3,4 @@ project(LFA2)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(LFA2 main.cpp AFN.cpp AFN.h AFD.cpp AFD.h)
+add_executable(LFA2 main.cpp AFN.cpp AFN.h)
