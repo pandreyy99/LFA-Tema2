@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include <list>
 #include <vector>
 #include <queue>
@@ -18,10 +19,8 @@ public:
     AFN();
     AFN ( const AFN& C );
     virtual ~AFN();
-    friend void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr ) ;
+    friend void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr  , char* alfabet  ) ;
 
-    ///friend bool delta( AFN *T , int n , int *StF , int nr , queue < int > &MultimeStari , char word[100]) ;
-    ///friend void delta_prim( AFN *T , int n , queue < int >& MultimeStari , char character ) ;
     friend void inchidere( AFN * , int nrStari ) ;
 
     friend bool isNot(AFN *T, int nrStari, int pozitie, int stare);
@@ -29,6 +28,8 @@ public:
     friend vector<int> concatenate(vector<int>, vector<int>);
 
     friend vector<int> delta(AFN *T, int nrStari, int stare, char character);
+
+    friend vector < vector < int > > tabelPrelim( AFN* T , int nrStari , char* alfabet ) ;
 
 protected:
 

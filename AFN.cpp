@@ -38,9 +38,15 @@ AFN::~AFN()
     nrstf = 0 ;
 }
 
-void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr )
-{   int i , j , x ;
+void citire_automat( AFN *&T , int &n , int &q , int *&StF , int &nr , char alfabet[100]  )
+{   int i , j , x  , nrLitereAlfabet ;
+    char c ;
     ifstream f( "C:\\Users\\Andrei\\Documents\\GitHub\\LFA-Tema2\\automat.ini" ) ;
+    /**
+     * citim alfabetul
+     */
+    cout << "Alfabetul = " ;
+    cin >> alfabet ;
     /** Citim starea initiala */
     f >> i ;
     q = i ;
@@ -114,9 +120,15 @@ void inchidere( AFN* T , int nrStari ){
     }
 }
 
+bool isNotYet( vector < int > temp , int valoare ){
+    for( auto it = temp.begin() ; it != temp.end() ; it++ )
+        if( *it == valoare ) return false ;
+    return true ;
+}
+
 vector<int> concatenate(vector<int> multime1, vector<int> multime2) {
     vector<int> temp;
-    int size = multime1.size() + multime2.size();
+    int size = multime1.size() + multime2.size() , k = 1 ;
     temp.resize(size + 1);
     for (auto iterator = multime1.begin(); iterator != multime1.end(); iterator++)
         temp.push_back(*iterator);
@@ -124,15 +136,15 @@ vector<int> concatenate(vector<int> multime1, vector<int> multime2) {
         bool ok = true;
         for (auto i = temp.begin(); i != temp.end(); i++)
             if (*iterator == *i) ok = false;
-        if (ok) temp.push_back(*iterator);
+        if (ok) { temp.push_back(*iterator); k++ ;}
     }
-    return temp;
+    return temp.resize(multime1.size()+k);
 }
 
-vector<int> delta(AFN *T, int nrStari, int stare, char character) {
+vector < int > delta( AFN *T , int nrStari , int stare , char character ) {
     inchidere(T, nrStari);
     vector<int> temp1, temp2;
-    temp1.resize(nrStari + 1);
+    temp1.resize(nrStari * nrStari); ///trebuie modif marimea
     temp2.resize(nrStari + 1);
     for (auto iterator = T[stare].Inchidere.begin(); iterator != T[stare].Inchidere.end(); iterator++) {
         for (int i = 0; i < T[*iterator].nrchr; i++)
@@ -140,12 +152,32 @@ vector<int> delta(AFN *T, int nrStari, int stare, char character) {
                 list<int> L = T[*iterator].StareFin[i];
                 while (!L.empty()) {
                     int x = L.front();
+                    if(isNotYet())
                     temp1.push_back(x);
                     L.pop_front();
                 }
             }
     }
-    for (auto iterator = temp1.begin(); iterator != temp1.end(); iterator++)
+    for (auto iterator = temp1.begin(); iterator != temp1.end(); iterator++){
         temp2 = concatenate(temp2, T[*iterator].Inchidere);
+        cout << *iterator << " " ;
+    }
+    cout << endl ;
     return temp2;
+}
+
+vector < vector < int > > tabelPrelim( AFN* T , int nrStari , char alfabet[100] ){
+    vector < vector < int > > temp ;
+    int i , j , size ;
+    size = ( strlen(alfabet) ) * nrStari + 1 ;
+    temp.resize( size ) ;
+    for( i = 0 ; i < size ; i++ )
+        temp[i].resize( ( nrStari + 1 ) , -1 ) ;
+    for( i = 0 ; i < strlen(alfabet) ; i++ ){
+        for( j = 0 ; j < size ; j++ ){
+            temp[j] = delta( T , nrStari , (j%nrStari) , alfabet[i] ) ;
+        }
+
+    }
+    return temp ;
 }
