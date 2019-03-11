@@ -1,6 +1,10 @@
-# LFA-Tema2
-Tema 2 Lab.LFA
+# University project for Formal Languages and Automata
 
-<p> Transformarea AFN-lambda -> AFD </p>
-<p>Proiect realizat de Paraschiv Andrei-Dumitru </p>
-<p>Profesor coordonator : Cosmin Silvian-Alexandru </p>
+## Realized by Paraschiv Andrei-Dumitru
+## Coordonated by @Cosmin Silvian-Alexandru 
+
+A console program made in C++ that converts nedeterministic finite automata to deterministic finite automata.
+
+**Input :** *NFA* M1
+
+**Output :** *DFA* M2, L(M2) = L(M1).
